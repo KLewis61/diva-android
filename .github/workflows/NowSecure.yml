@@ -31,6 +31,26 @@ jobs:
           name: app
           path: ./app/build/outputs/apk/debug/app-debug.apk
           retention-days: 3
+  scan:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Install ripgrep
+        run: sudo apt-get install -y ripgrep
+
+      - name: Download application
+        uses: actions/download-artifact@v2
+        with:
+          name: app
+      - name: NowSecure Mobile SBOM
+	      uses: nowsecure/nowsecure-sbom-action@v1
+        with:
+          token: ${{ secrets.NS_TOKEN }}
+          app_file: app-debug.apk
+          group_id: "b6b996f4-ac5f-4b46-a4e7-5ebede6d5e6d"
   
 
 
